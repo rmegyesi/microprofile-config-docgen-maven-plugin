@@ -16,7 +16,7 @@ Add the following snippet to your pom.xml:
     <plugins>
         ...
         <plugin>
-            <groupId>hu.megyesi</groupId>
+            <groupId>hu.rmegyesi</groupId>
             <artifactId>microprofile-config-docgen-maven-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <executions>

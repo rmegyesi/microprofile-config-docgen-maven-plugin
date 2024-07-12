@@ -1,4 +1,24 @@
-package hu.megyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen;
+
+/*-
+ * #%L
+ * Microprofile Config Docgen Maven Plugin
+ * %%
+ * Copyright (C) 2024 Róbert Megyesi
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -24,9 +44,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.RUNTIME)
-public class ConfigDocumentationMojo extends AbstractMojo {
+public class MPConfigDocGeneratorMojo extends AbstractMojo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigDocumentationMojo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MPConfigDocGeneratorMojo.class);
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
@@ -53,7 +73,7 @@ public class ConfigDocumentationMojo extends AbstractMojo {
         List<Class<?>> classes = getAllClasses(packageName);
 
         try (FileWriter writer = new FileWriter(outputFile)) {
-            DocWriter doc = new DocWriter(writer);
+            AsciiDocWriter doc = new AsciiDocWriter(writer);
             doc.writeHeader();
             doc.writeTableHeading();
 
