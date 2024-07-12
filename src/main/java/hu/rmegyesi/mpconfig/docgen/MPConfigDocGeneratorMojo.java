@@ -20,6 +20,7 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
+import io.smallrye.config.ConfigMapping;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -79,6 +80,13 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
 
             for (Class<?> clazz : classes) {
                 String prefix = "";
+
+                if (clazz.isAnnotationPresent(ConfigMapping.class)) {
+                    ConfigMappingProcessor configMappingProcessor = new ConfigMappingProcessor(doc);
+                    configMappingProcessor.processClass(clazz);
+                    continue;
+                }
+
                 if (clazz.isAnnotationPresent(ConfigProperties.class)) {
                     LOGGER.debug("{} annotated class: {}", ConfigProperties.class.getSimpleName(), clazz.getSimpleName());
 
