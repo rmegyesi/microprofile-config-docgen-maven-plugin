@@ -37,14 +37,21 @@ public class AsciiDocWriter {
 
     public void writeTableHeading() throws IOException {
         writer.write("|===\n");
-        writer.write("| Property Name | Environment Variable | Default value | Optional\n\n");
+        writer.write("| Property Name | Environment Variable | Default value | Optional | Type\n\n");
     }
 
-    public void writeProperty(String propertyName, String environmentVariable, String defaultValue, boolean optional) throws IOException {
-        writer.write("| " + propertyName + "\n");
-        writer.write("| " + environmentVariable + "\n");
-        writer.write("| " + defaultValue + "\n");
-        writer.write("| " + optional + "\n\n");
+    public void writeProperty(String propertyName, String environmentVariable, String defaultValue, boolean optional, String type) throws IOException {
+        writeTableCell(propertyName);
+        writeTableCell(environmentVariable);
+        writeTableCell(defaultValue);
+        writeTableCell(optional);
+        writeTableCell(type);
+
+        writer.write("\n");
+    }
+
+    private void writeTableCell(Object value) throws IOException {
+        writer.write("| " + value + "\n");
     }
 
     public void writeTableEnd() throws IOException {

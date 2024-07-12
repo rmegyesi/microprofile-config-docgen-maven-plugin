@@ -51,7 +51,7 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
 
-    @Parameter(defaultValue = "${project.basedir}/config-docs.adoc", property = "outputFile", required = true)
+    @Parameter(defaultValue = "${project.basedir}/config-properties.adoc", property = "outputFile", required = true)
     private File outputFile;
 
     @Parameter(property = "packageName", required = true)
@@ -91,13 +91,14 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
                         LOGGER.debug("{} annotated field: {}", ConfigProperty.class.getSimpleName(), field.getName());
 
                         ConfigProperty configProperty = field.getAnnotation(ConfigProperty.class);
-                        String propertyName = prefix + configProperty.name();
-                        String environmentVariable = configPropertyToEnvironmentVariable(propertyName);
-                        String defaultValue = getDefaultValue(configProperty, field);
-                        boolean optional = field.getType().equals(Optional.class);
+                        String propertyName = getPropertyName(configProperty, clazz, field, prefix);
+                        String environmentVariable = propertyNameToEnvironmentVariable(propertyName);
+                        String defaultValue = getDefaultValue(configProperty);
+                        String type = field.getGenericType().getTypeName();
+                        boolean optional = isOptional(field);
 
                         LOGGER.info("Config property: {}", propertyName);
-                        doc.writeProperty(propertyName, environmentVariable, defaultValue, optional);
+                        doc.writeProperty(propertyName, environmentVariable, defaultValue, optional, type);
                     }
                 }
             }
@@ -106,11 +107,28 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private static String configPropertyToEnvironmentVariable(String configProperty) {
+    static String getPropertyName(ConfigProperty configProperty, Class<?> parentClass, Field field, String prefix) {
+        if (configProperty.name().isEmpty()) {
+            if (prefix.isEmpty()) {
+                return parentClass.getCanonicalName() + "." + field.getName();
+            }
+
+            return prefix + field.getName();
+        }
+
+
+        return prefix + configProperty.name();
+    }
+
+    static boolean isOptional(Field field) {
+        return field.getType().equals(Optional.class);
+    }
+
+    static String propertyNameToEnvironmentVariable(String configProperty) {
         return configProperty.toUpperCase().replaceAll("[^A-Za-z0-9]", "_");
     }
 
-    private static String getDefaultValue(ConfigProperty configProperty, Field field) {
+    static String getDefaultValue(ConfigProperty configProperty) {
         if (!configProperty.defaultValue().equals(ConfigProperty.UNCONFIGURED_VALUE)) {
             return configProperty.defaultValue();
         }
