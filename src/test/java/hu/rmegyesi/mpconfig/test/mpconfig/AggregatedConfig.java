@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.test;
+package hu.rmegyesi.mpconfig.test.mpconfig;
 
 /*-
  * #%L

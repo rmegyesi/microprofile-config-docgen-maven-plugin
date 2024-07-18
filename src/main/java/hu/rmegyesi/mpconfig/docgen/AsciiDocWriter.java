@@ -40,6 +40,21 @@ public class AsciiDocWriter {
         writer.write("| Property Name | Environment Variable | Default value | Optional | Type\n\n");
     }
 
+    public void writeProperty(ConfigPropertyDocElement element) {
+        try {
+            writeProperty(
+                    element.name(),
+                    element.environmentVariable(),
+                    element.defaultValue(),
+                    element.optional(),
+                    element.type()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public void writeProperty(String propertyName, String environmentVariable, String defaultValue, boolean optional, String type) throws IOException {
         writeTableCell(propertyName);
         writeTableCell(environmentVariable);

@@ -20,8 +20,8 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
-import hu.rmegyesi.mpconfig.test.AggregatedConfig;
-import hu.rmegyesi.mpconfig.test.TestBean;
+import hu.rmegyesi.mpconfig.test.mpconfig.AggregatedConfig;
+import hu.rmegyesi.mpconfig.test.mpconfig.TestBean;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class MPConfigDocGeneratorMojoTest {
         Class<TestBean> testBeanClass = TestBean.class;
 
         String actual = getPropertyName(testBeanClass, "unnamedStringInBean", "");
-        String expected = "hu.rmegyesi.mpconfig.test.TestBean.unnamedStringInBean";
+        String expected = "hu.rmegyesi.mpconfig.test.mpconfig.TestBean.unnamedStringInBean";
 
         Assertions.assertEquals(expected, actual);
     }
@@ -71,16 +71,16 @@ class MPConfigDocGeneratorMojoTest {
         Field field = parentClass.getDeclaredField(fieldName);
         ConfigProperty configProperty = field.getAnnotation(ConfigProperty.class);
 
-        return MPConfigDocGeneratorMojo.getPropertyName(configProperty, parentClass, field, prefix);
+        return MPConfigAnnotationProcessor.getPropertyName(configProperty, parentClass, field, prefix);
     }
 
     @Test
     void isOptional() throws NoSuchFieldException {
         Field optionalField = AggregatedConfig.class.getDeclaredField("optionalString");
-        Assertions.assertTrue(MPConfigDocGeneratorMojo.isOptional(optionalField));
+        Assertions.assertTrue(Utils.isOptionalField(optionalField));
 
         Field requiredField = AggregatedConfig.class.getDeclaredField("exampleString");
-        Assertions.assertFalse(MPConfigDocGeneratorMojo.isOptional(requiredField));
+        Assertions.assertFalse(Utils.isOptionalField(requiredField));
     }
 
     @Test
@@ -92,7 +92,7 @@ class MPConfigDocGeneratorMojoTest {
         );
 
         inputAndExpectedMap.forEach((input, expected) -> {
-            String actual = MPConfigDocGeneratorMojo.propertyNameToEnvironmentVariable(input);
+            String actual = Utils.configPropertyToEnvironmentVariable(input);
             Assertions.assertEquals(expected, actual);
         });
     }
@@ -103,7 +103,7 @@ class MPConfigDocGeneratorMojoTest {
         Field field = aggregatedConfigClass.getDeclaredField("defaultString");
         ConfigProperty configProperty = field.getAnnotation(ConfigProperty.class);
 
-        String actual = MPConfigDocGeneratorMojo.getDefaultValue(configProperty);
+        String actual = MPConfigAnnotationProcessor.getDefaultValue(configProperty);
         String expected = "I have a default value";
         Assertions.assertEquals(expected, actual);
     }
@@ -114,7 +114,7 @@ class MPConfigDocGeneratorMojoTest {
         Field field = aggregatedConfigClass.getDeclaredField("exampleString");
         ConfigProperty configProperty = field.getAnnotation(ConfigProperty.class);
 
-        String actual = MPConfigDocGeneratorMojo.getDefaultValue(configProperty);
+        String actual = MPConfigAnnotationProcessor.getDefaultValue(configProperty);
         Assertions.assertTrue(actual.isEmpty());
     }
 }
