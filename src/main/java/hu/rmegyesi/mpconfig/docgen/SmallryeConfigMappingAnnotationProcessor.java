@@ -6,10 +6,7 @@ import io.smallrye.config.WithName;
 import io.smallrye.config.WithParentName;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class SmallryeConfigMappingAnnotationProcessor {
@@ -17,14 +14,15 @@ public class SmallryeConfigMappingAnnotationProcessor {
     public Stream<ConfigPropertyDocElement> processConfigMappingInterface(Class<?> clazz) {
         ConfigMapping configMapping = clazz.getAnnotation(ConfigMapping.class);
 
-        return processInterface(clazz, configMapping, configMapping.prefix());
+        return processInterface(clazz, configMapping, Collections.emptySet(), configMapping.prefix());
     }
 
-    private Stream<ConfigPropertyDocElement> processInterface(Class<?> clazz, ConfigMapping configMapping, String prefix) {
-        HashSet<Class<?>> configGroups = new HashSet<>(Arrays.asList(clazz.getDeclaredClasses()));
+    private Stream<ConfigPropertyDocElement> processInterface(Class<?> clazz, ConfigMapping configMapping, Set<Class<?>> configGroups, String prefix) {
+        HashSet<Class<?>> groups = new HashSet<>(Arrays.asList(clazz.getDeclaredClasses()));
+        groups.addAll(configGroups);
 
         return Arrays.stream(clazz.getDeclaredMethods())
-                .flatMap(method -> processMethod(method, configMapping, configGroups, prefix));
+                .flatMap(method -> processMethod(method, configMapping, groups, prefix));
     }
 
     private Stream<ConfigPropertyDocElement> processMethod(Method method, ConfigMapping configMapping, Set<Class<?>> configGroups, String prefix) {
@@ -32,12 +30,12 @@ public class SmallryeConfigMappingAnnotationProcessor {
 
         if (configGroups.contains(returnType)) {
             if (method.isAnnotationPresent(WithParentName.class)) {
-                return processInterface(returnType, configMapping, prefix);
+                return processInterface(returnType, configMapping, configGroups, prefix);
             } else if (method.isAnnotationPresent(WithName.class)) {
                 WithName withName = method.getAnnotation(WithName.class);
-                return processInterface(returnType, configMapping, prefix + "." + withName.value());
+                return processInterface(returnType, configMapping, configGroups, prefix + "." + withName.value());
             } else {
-                return processInterface(returnType, configMapping, prefix + "." + configMapping.namingStrategy().apply(method.getName()));
+                return processInterface(returnType, configMapping, configGroups, prefix + "." + configMapping.namingStrategy().apply(method.getName()));
             }
         }
 
