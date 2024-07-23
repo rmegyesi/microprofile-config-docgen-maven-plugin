@@ -20,6 +20,11 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
+import hu.rmegyesi.mpconfig.docgen.mpconfig.MPConfigAnnotationProcessor;
+import hu.rmegyesi.mpconfig.docgen.scanner.ClassScanner;
+import hu.rmegyesi.mpconfig.docgen.smallryeconfig.SmallryeConfigMappingAnnotationProcessor;
+import hu.rmegyesi.mpconfig.docgen.writer.AsciiDocWriter;
 import io.smallrye.config.ConfigMapping;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -34,12 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class MPConfigDocGeneratorMojo extends AbstractMojo {
@@ -55,15 +55,14 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     @Parameter(property = "packageName", required = true)
     private String packageName;
 
-    ClassLoader classLoader;
-
+    ClassScanner classScanner;
     MPConfigAnnotationProcessor mpConfigAnnotationProcessor;
     SmallryeConfigMappingAnnotationProcessor smallryeConfigMappingAnnotationProcessor;
 
     @Override
     public void execute() throws MojoExecutionException {
         try {
-            classLoader = getClassLoader();
+            classScanner = new ClassScanner(project);
             mpConfigAnnotationProcessor = new MPConfigAnnotationProcessor();
             smallryeConfigMappingAnnotationProcessor = new SmallryeConfigMappingAnnotationProcessor();
 
@@ -74,7 +73,7 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     }
 
     private void generateDocumentation() throws IOException, ClassNotFoundException {
-        Stream<ConfigPropertyDocElement> configPropertyDocElementStream = getAllClasses(packageName)
+        Stream<ConfigPropertyDocElement> configPropertyDocElementStream = classScanner.getAllClasses(packageName)
                 .flatMap(this::getElements);
 
         try (FileWriter writer = new FileWriter(outputFile)) {
@@ -96,69 +95,5 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private Stream<Class<?>> getAllClasses(String packageName) {
-        String path = packageName.replace('.', '/');
-        Iterable<URL> resources = () -> {
-            try {
-                return classLoader.getResources(path).asIterator();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        };
 
-        return StreamSupport.stream(resources.spliterator(), false)
-                .map(url -> new File(url.getFile()))
-                .flatMap(directory -> findClasses(directory, packageName));
-    }
-
-    private Stream<Class<?>> findClasses(File directory, String packageName) {
-        LOGGER.info("findClasses in directory: {}", directory.toString());
-
-        if (!directory.exists()) {
-            return Stream.empty();
-        }
-        File[] files = directory.listFiles();
-        if (files == null) {
-            return Stream.empty();
-        }
-
-        return Arrays.stream(files)
-                .flatMap(file -> {
-                    if (file.isDirectory()) {
-                        return findClasses(file, packageName + "." + file.getName());
-                    } else if (file.getName().endsWith(".class")) {
-                        String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-                        try {
-                            Class<?> loadedClass = classLoader.loadClass(className);
-                            return Stream.of(loadedClass);
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        return Stream.empty();
-                    }
-                });
-    }
-
-    // Method courtesy from TabNine From Google Results.
-    private ClassLoader getClassLoader() {
-        ClassLoader classLoader = null;
-        try {
-            List<String> classpathElements = project.getRuntimeClasspathElements();
-            if (null == classpathElements) {
-                return Thread.currentThread().getContextClassLoader();
-            }
-            LOGGER.info("Classpathelements: {}", classpathElements);
-
-            URL[] urls = new URL[classpathElements.size()];
-
-            for (int i = 0; i < classpathElements.size(); ++i) {
-                urls[i] = new File(classpathElements.get(i)).toURI().toURL();
-            }
-            classLoader = new URLClassLoader(urls, getClass().getClassLoader());
-        } catch (Exception e) {
-            LOGGER.error("Failed to get classloader", e);
-        }
-        return classLoader;
-    }
 }

@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.smallryeconfig;
 
 /*-
  * #%L
@@ -20,6 +20,8 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.Utils;
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;

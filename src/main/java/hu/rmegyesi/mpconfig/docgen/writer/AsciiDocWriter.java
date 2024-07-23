@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.writer;
 
 /*-
  * #%L
@@ -19,6 +19,8 @@ package hu.rmegyesi.mpconfig.docgen;
  * limitations under the License.
  * #L%
  */
+
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
 
 import java.io.IOException;
 import java.io.Writer;

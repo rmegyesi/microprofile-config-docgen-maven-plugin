@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.data;
 
 /*-
  * #%L

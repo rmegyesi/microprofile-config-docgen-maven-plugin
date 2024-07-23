@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.mpconfig;
 
 /*-
  * #%L
@@ -20,6 +20,8 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.Utils;
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;

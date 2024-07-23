@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.mpconfig;
 
 /*-
  * #%L
@@ -20,7 +20,9 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
-import hu.rmegyesi.mpconfig.test.smallryeconfig.NestedConfigMapping;
+import hu.rmegyesi.mpconfig.docgen.TestUtils;
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
+import hu.rmegyesi.mpconfig.test.mpconfig.AggregatedConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -31,18 +33,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static hu.rmegyesi.mpconfig.docgen.TestUtils.getExpectedPropertyNames;
+public class MPConfigAnnotationProcessorTest {
 
-public class SmallryeConfigMappingAnnotationProcessorTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SmallryeConfigMappingAnnotationProcessorTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MPConfigAnnotationProcessor.class);
 
     @Test
     void testNestedConfig() {
-        SmallryeConfigMappingAnnotationProcessor processor = new SmallryeConfigMappingAnnotationProcessor();
-        Stream<ConfigPropertyDocElement> configs = processor.processConfigMappingInterface(NestedConfigMapping.class);
+        MPConfigAnnotationProcessor processor = new MPConfigAnnotationProcessor();
+        Stream<ConfigPropertyDocElement> configs = processor.processClass(AggregatedConfig.class);
 
-        Set<String> expectedNames = getExpectedPropertyNames(NestedConfigMapping.class);
+        Set<String> expectedNames = TestUtils.getExpectedPropertyNames(AggregatedConfig.class);
         Set<String> configNames = configs.map(ConfigPropertyDocElement::name).collect(Collectors.toSet());
 
         Set<String> unexpectedNames = new HashSet<>(configNames);
@@ -58,4 +58,5 @@ public class SmallryeConfigMappingAnnotationProcessorTest {
         Assertions.assertTrue(unexpectedNames.isEmpty());
         Assertions.assertTrue(missingNames.isEmpty());
     }
+
 }

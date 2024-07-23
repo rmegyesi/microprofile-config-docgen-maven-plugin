@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.mpconfig;
 
 /*-
  * #%L
@@ -20,6 +20,7 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.Utils;
 import hu.rmegyesi.mpconfig.test.mpconfig.AggregatedConfig;
 import hu.rmegyesi.mpconfig.test.mpconfig.TestBean;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 import static hu.rmegyesi.mpconfig.docgen.TestUtils.getExpectedProperty;
 
-class MPConfigDocGeneratorMojoTest {
+class MPConfigPropertyDocTest {
 
     @Test
     void getPropertyName_withConfigProperties_withName() throws NoSuchFieldException {
