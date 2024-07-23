@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.test;
+package hu.rmegyesi.mpconfig.docgen.data;
 
 /*-
  * #%L
@@ -20,14 +20,6 @@ package hu.rmegyesi.mpconfig.test;
  * #L%
  */
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-public class TestBean {
-
-    @ConfigProperty(name = "my-config")
-    String namedStringInBean;
-
-    @ConfigProperty
-    String unnamedStringInBean;
-
+public record ConfigPropertyDocElement(String name, String environmentVariable, String defaultValue, String type,
+                                       boolean optional) {
 }

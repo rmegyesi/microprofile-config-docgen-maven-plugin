@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.test;
+package hu.rmegyesi.mpconfig.docgen;
 
 /*-
  * #%L
@@ -20,23 +20,11 @@ package hu.rmegyesi.mpconfig.test;
  * #L%
  */
 
-import org.eclipse.microprofile.config.inject.ConfigProperties;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import java.lang.annotation.*;
 
-import java.util.Optional;
-
-@ConfigProperties(prefix = "app")
-public class AggregatedConfig {
-
-    @ConfigProperty(name = "example-string")
-    String exampleString;
-
-    @ConfigProperty
-    String unnamedString;
-
-    @ConfigProperty(name = "default-string", defaultValue = "I have a default value")
-    String defaultString;
-
-    @ConfigProperty(name = "optional-string")
-    Optional<String> optionalString;
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.FIELD})
+public @interface ExpectedProperties {
+    String[] value();
 }

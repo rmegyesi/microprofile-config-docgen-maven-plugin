@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen;
+package hu.rmegyesi.mpconfig.docgen.writer;
 
 /*-
  * #%L
@@ -20,6 +20,8 @@ package hu.rmegyesi.mpconfig.docgen;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
+
 import java.io.IOException;
 import java.io.Writer;
 
@@ -38,6 +40,21 @@ public class AsciiDocWriter {
     public void writeTableHeading() throws IOException {
         writer.write("|===\n");
         writer.write("| Property Name | Environment Variable | Default value | Optional | Type\n\n");
+    }
+
+    public void writeProperty(ConfigPropertyDocElement element) {
+        try {
+            writeProperty(
+                    element.name(),
+                    element.environmentVariable(),
+                    element.defaultValue(),
+                    element.optional(),
+                    element.type()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void writeProperty(String propertyName, String environmentVariable, String defaultValue, boolean optional, String type) throws IOException {
