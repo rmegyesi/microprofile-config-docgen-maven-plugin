@@ -20,6 +20,7 @@ package hu.rmegyesi.mpconfig.test.mpconfig;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.ExpectedProperties;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -28,15 +29,19 @@ import java.util.Optional;
 @ConfigProperties(prefix = "app")
 public class AggregatedConfig {
 
+    @ExpectedProperties({"app.example-string"})
     @ConfigProperty(name = "example-string")
     String exampleString;
 
+    @ExpectedProperties({"app.unnamedString"})
     @ConfigProperty
     String unnamedString;
 
+    @ExpectedProperties({"app.default-string"})
     @ConfigProperty(name = "default-string", defaultValue = "I have a default value")
     String defaultString;
 
+    @ExpectedProperties({"app.optional-string"})
     @ConfigProperty(name = "optional-string")
     Optional<String> optionalString;
 }

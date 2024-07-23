@@ -20,13 +20,16 @@ package hu.rmegyesi.mpconfig.test.mpconfig;
  * #L%
  */
 
+import hu.rmegyesi.mpconfig.docgen.ExpectedProperties;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 public class TestBean {
 
+    @ExpectedProperties({"my-config"})
     @ConfigProperty(name = "my-config")
     String namedStringInBean;
 
+    @ExpectedProperties({"hu.rmegyesi.mpconfig.test.mpconfig.TestBean.unnamedStringInBean"})
     @ConfigProperty
     String unnamedStringInBean;
 

@@ -29,30 +29,35 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import static hu.rmegyesi.mpconfig.docgen.TestUtils.getExpectedProperty;
+
 class MPConfigDocGeneratorMojoTest {
 
     @Test
     void getPropertyName_withConfigProperties_withName() throws NoSuchFieldException {
         Class<AggregatedConfig> aggregatedConfigClass = AggregatedConfig.class;
+        String fieldName = "exampleString";
 
-        String exampleStringProperty = getPropertyName(aggregatedConfigClass, "exampleString", "app.");
-        Assertions.assertEquals("app.example-string", exampleStringProperty);
+        String exampleStringProperty = getPropertyName(aggregatedConfigClass, fieldName, "app");
+        Assertions.assertEquals(getExpectedProperty(aggregatedConfigClass, fieldName), exampleStringProperty);
     }
 
     @Test
     void getPropertyName_withConfigProperties_withoutName() throws NoSuchFieldException {
         Class<AggregatedConfig> aggregatedConfigClass = AggregatedConfig.class;
+        String fieldName = "unnamedString";
 
-        String unnamedStringProperty = getPropertyName(aggregatedConfigClass, "unnamedString", "app.");
-        Assertions.assertEquals("app.unnamedString", unnamedStringProperty);
+        String unnamedStringProperty = getPropertyName(aggregatedConfigClass, fieldName, "app");
+        Assertions.assertEquals(getExpectedProperty(aggregatedConfigClass, fieldName), unnamedStringProperty);
     }
 
     @Test
     void getPropertyName_withoutConfigProperties_withName() throws NoSuchFieldException {
         Class<TestBean> testBeanClass = TestBean.class;
+        String fieldName = "namedStringInBean";
 
-        String actual = getPropertyName(testBeanClass, "namedStringInBean", "");
-        String expected = "my-config";
+        String actual = getPropertyName(testBeanClass, fieldName, "");
+        String expected = getExpectedProperty(testBeanClass, fieldName);
 
         Assertions.assertEquals(expected, actual);
     }
@@ -60,9 +65,10 @@ class MPConfigDocGeneratorMojoTest {
     @Test
     void getPropertyName_withoutConfigProperties_withoutName() throws NoSuchFieldException {
         Class<TestBean> testBeanClass = TestBean.class;
+        String fieldName = "unnamedStringInBean";
 
-        String actual = getPropertyName(testBeanClass, "unnamedStringInBean", "");
-        String expected = "hu.rmegyesi.mpconfig.test.mpconfig.TestBean.unnamedStringInBean";
+        String actual = getPropertyName(testBeanClass, fieldName, "");
+        String expected = getExpectedProperty(testBeanClass, fieldName);
 
         Assertions.assertEquals(expected, actual);
     }

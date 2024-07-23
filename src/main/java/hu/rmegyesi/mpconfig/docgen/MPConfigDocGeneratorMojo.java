@@ -64,17 +64,12 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         try {
             classLoader = getClassLoader();
+            mpConfigAnnotationProcessor = new MPConfigAnnotationProcessor();
+            smallryeConfigMappingAnnotationProcessor = new SmallryeConfigMappingAnnotationProcessor();
+
             generateDocumentation();
         } catch (IOException | ClassNotFoundException e) {
             throw new MojoExecutionException("Error writing documentation", e);
-        }
-    }
-
-    private Stream<ConfigPropertyDocElement> getElements(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(ConfigMapping.class)) {
-            return smallryeConfigMappingAnnotationProcessor.processConfigMappingInterface(clazz);
-        } else {
-            return mpConfigAnnotationProcessor.processClass(clazz);
         }
     }
 
@@ -90,6 +85,14 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
             configPropertyDocElementStream.forEach(doc::writeProperty);
 
             doc.writeTableEnd();
+        }
+    }
+
+    private Stream<ConfigPropertyDocElement> getElements(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(ConfigMapping.class)) {
+            return smallryeConfigMappingAnnotationProcessor.processConfigMappingInterface(clazz);
+        } else {
+            return mpConfigAnnotationProcessor.processClass(clazz);
         }
     }
 
@@ -109,6 +112,8 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     }
 
     private Stream<Class<?>> findClasses(File directory, String packageName) {
+        LOGGER.info("findClasses in directory: {}", directory.toString());
+
         if (!directory.exists()) {
             return Stream.empty();
         }
@@ -143,6 +148,8 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
             if (null == classpathElements) {
                 return Thread.currentThread().getContextClassLoader();
             }
+            LOGGER.info("Classpathelements: {}", classpathElements);
+
             URL[] urls = new URL[classpathElements.size()];
 
             for (int i = 0; i < classpathElements.size(); ++i) {
