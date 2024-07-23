@@ -1,11 +1,19 @@
-# Microprofile Config Docgen Maven Plugin
+# MicroProfile Config Docgen Maven Plugin
 
-Generates an AsciiDoc file from Microprofile Config annontations.
+Generates an AsciiDoc file from MicroProfile Config and Smallrye Config annontations.
 
 ## Supported annotations
 
+### MicroProfile Config
 * @ConfigProperties
 * @ConfigProperty
+
+### Smallrye Config
+
+* @ConfigMapping
+* @WithName
+* @WithDefault
+* @WithParentName
 
 ## Usage
 
