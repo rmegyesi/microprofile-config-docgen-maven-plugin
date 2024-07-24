@@ -23,16 +23,34 @@ package hu.rmegyesi.mpconfig.docgen;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-public class Utils {
+/**
+ * Utilities
+ */
+public abstract class Utils {
 
+    /**
+     * Checks if the field is optional
+     * @param field Field
+     * @return True, if field is of Optional type
+     */
     public static boolean isOptionalField(Field field) {
         return field.getType().equals(Optional.class);
     }
 
+    /**
+     * Gets the type of the field
+     * @param field Field
+     * @return Name of the type
+     */
     public static String getFieldType(Field field) {
         return field.getGenericType().getTypeName();
     }
 
+    /**
+     * Converts a config property name to environment variable name
+     * @param configProperty Config property name
+     * @return Environment variable name
+     */
     public static String configPropertyToEnvironmentVariable(String configProperty) {
         return configProperty.toUpperCase().replaceAll("[^A-Za-z0-9]", "_");
     }

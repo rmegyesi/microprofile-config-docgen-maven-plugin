@@ -20,6 +20,14 @@ package hu.rmegyesi.mpconfig.docgen.data;
  * #L%
  */
 
+/**
+ * Config property data
+ * @param name Config property name
+ * @param environmentVariable Environment variable name
+ * @param defaultValue Default value
+ * @param type Type
+ * @param optional Optional
+ */
 public record ConfigPropertyDocElement(String name, String environmentVariable, String defaultValue, String type,
                                        boolean optional) {
 }

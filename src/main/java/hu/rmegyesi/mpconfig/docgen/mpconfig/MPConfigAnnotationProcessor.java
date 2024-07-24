@@ -32,10 +32,18 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+/**
+ * Processor for MicroProfile Config annotations
+ */
 public class MPConfigAnnotationProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MPConfigAnnotationProcessor.class);
 
+    /**
+     * Finds all config properties in a class
+     * @param clazz Class to process
+     * @return Stream of config properties
+     */
     public Stream<ConfigPropertyDocElement> processClass(Class<?> clazz) {
         String prefix = getPrefix(clazz);
 

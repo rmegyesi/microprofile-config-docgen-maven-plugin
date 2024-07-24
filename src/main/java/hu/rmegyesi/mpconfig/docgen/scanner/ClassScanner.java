@@ -33,16 +33,28 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Utility class for finding classes
+ */
 public class ClassScanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassScanner.class);
 
     ClassLoader classLoader;
 
+    /**
+     * Public constructor
+     * @param mavenProject Maven project
+     */
     public ClassScanner(MavenProject mavenProject) {
         this.classLoader = getClassLoader(mavenProject);
     }
 
+    /**
+     * Recursively finds all classes under a package
+     * @param packageName Package name
+     * @return Stream of classes
+     */
     public Stream<Class<?>> getAllClasses(String packageName) {
         String path = packageName.replace('.', '/');
         Iterable<URL> resources = () -> {

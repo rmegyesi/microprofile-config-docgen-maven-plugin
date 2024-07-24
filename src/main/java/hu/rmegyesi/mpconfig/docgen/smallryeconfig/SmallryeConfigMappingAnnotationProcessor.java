@@ -31,8 +31,16 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * Processor for Smallrye Config annotations
+ */
 public class SmallryeConfigMappingAnnotationProcessor {
 
+    /**
+     * Finds all config properties in a class
+     * @param clazz Class to process
+     * @return Stream of config properties
+     */
     public Stream<ConfigPropertyDocElement> processConfigMappingInterface(Class<?> clazz) {
         ConfigMapping configMapping = clazz.getAnnotation(ConfigMapping.class);
 

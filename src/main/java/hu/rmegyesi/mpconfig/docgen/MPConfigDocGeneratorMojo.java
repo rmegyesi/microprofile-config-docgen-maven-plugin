@@ -41,6 +41,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.stream.Stream;
 
+/**
+ * Document generator mojo.
+ */
 @Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class MPConfigDocGeneratorMojo extends AbstractMojo {
 
@@ -59,6 +62,9 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     MPConfigAnnotationProcessor mpConfigAnnotationProcessor;
     SmallryeConfigMappingAnnotationProcessor smallryeConfigMappingAnnotationProcessor;
 
+    /**
+     * Serves as the main entry point of the plugin.
+     */
     @Override
     public void execute() throws MojoExecutionException {
         try {
