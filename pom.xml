@@ -6,10 +6,14 @@
 
     <groupId>hu.rmegyesi</groupId>
     <artifactId>microprofile-config-docgen-maven-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>maven-plugin</packaging>
 
-    <name>Microprofile Config Docgen Maven Plugin</name>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        Generates an AsciiDoc file from MicroProfile Config and Smallrye Config annotations.
+    </description>
+    <url>https://github.com/rmegyesi/microprofile-config-docgen-maven-plugin</url>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -110,12 +114,28 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Róbert Megyesi</name>
+            <email>rmegyesi19@gmail.com</email>
+            <organization>${organization.name}</organization>
+            <organizationUrl>${organization.url</organizationUrl>
+        </developer>
+    </developers>
+
     <organization>
         <name>Róbert Megyesi</name>
         <url>https://github.com/rmegyesi</url>
     </organization>
 
     <inceptionYear>2024</inceptionYear>
+
+    <scm>
+        <url>https://github.com/rmegyesi/microprofile-config-docgen-maven-plugin/tree/main</url>
+        <connection>scm:git:git://github.com/rmegyesi/microprofile-config-docgen-maven-plugin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:rmegyesi/microprofile-config-docgen-maven-plugin.git
+        </developerConnection>
+    </scm>
 
 
 </project>

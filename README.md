@@ -1,6 +1,6 @@
 # MicroProfile Config Docgen Maven Plugin
 
-Generates an AsciiDoc file from MicroProfile Config and Smallrye Config annontations.
+Generates an AsciiDoc file from MicroProfile Config and Smallrye Config annotations.
 
 ## Supported annotations
 
@@ -26,7 +26,7 @@ Add the following snippet to your pom.xml:
         <plugin>
             <groupId>hu.rmegyesi</groupId>
             <artifactId>microprofile-config-docgen-maven-plugin</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>0.1.0</version>
             <executions>
                 <execution>
                     <goals>
@@ -42,6 +42,8 @@ Add the following snippet to your pom.xml:
 </build>
 ```
 
+The plugin runs in `process-classes` phase.
+
 Manual execution:
 
 ```
@@ -50,7 +52,7 @@ mvn microprofile-config-docgen:generate
 
 ## Configuration
 
-| Property    | Descriptions                        |
-|-------------|-------------------------------------|
-| packageName | Root package name to be scanned     |
-| outputFile  | Target output file. Ends with .adoc |
+| Property    | Descriptions                        | Default value          |
+|-------------|-------------------------------------|------------------------|
+| packageName | Root package name to be scanned     |                        |
+| outputFile  | Target output file. Ends with .adoc | config-properties.adoc |
