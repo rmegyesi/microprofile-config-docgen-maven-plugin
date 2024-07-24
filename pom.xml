@@ -118,8 +118,8 @@
         <developer>
             <name>Róbert Megyesi</name>
             <email>rmegyesi19@gmail.com</email>
-            <organization>${organization.name}</organization>
-            <organizationUrl>${organization.url</organizationUrl>
+            <organization>${project.organization.name}</organization>
+            <organizationUrl>${project.organization.url</organizationUrl>
         </developer>
     </developers>
 
