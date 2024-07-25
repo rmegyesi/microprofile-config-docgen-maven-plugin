@@ -21,10 +21,11 @@ package hu.rmegyesi.mpconfig.docgen;
  */
 
 import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
+import hu.rmegyesi.mpconfig.docgen.data.DocumentType;
 import hu.rmegyesi.mpconfig.docgen.mpconfig.MPConfigAnnotationProcessor;
 import hu.rmegyesi.mpconfig.docgen.scanner.ClassScanner;
 import hu.rmegyesi.mpconfig.docgen.smallryeconfig.SmallryeConfigMappingAnnotationProcessor;
-import hu.rmegyesi.mpconfig.docgen.writer.AsciiDocWriter;
+import hu.rmegyesi.mpconfig.docgen.writer.DocumentWriter;
 import io.smallrye.config.ConfigMapping;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -54,6 +56,9 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}/config-properties.adoc", property = "outputFile", required = true)
     private File outputFile;
+
+    @Parameter(defaultValue = "ASCII_DOC", property = "fileType")
+    private DocumentType fileType;
 
     @Parameter(property = "packageName", required = true)
     private String packageName;
@@ -79,17 +84,15 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     }
 
     private void generateDocumentation() throws IOException, ClassNotFoundException {
-        Stream<ConfigPropertyDocElement> configPropertyDocElementStream = classScanner.getAllClasses(packageName)
-                .flatMap(this::getElements);
+        List<ConfigPropertyDocElement> elements = classScanner.getAllClasses(packageName)
+                .flatMap(this::getElements)
+                .sorted()
+                .toList();
+
 
         try (FileWriter writer = new FileWriter(outputFile)) {
-            AsciiDocWriter doc = new AsciiDocWriter(writer);
-            doc.writeHeader();
-            doc.writeTableHeading();
-
-            configPropertyDocElementStream.forEach(doc::writeProperty);
-
-            doc.writeTableEnd();
+            DocumentWriter doc = fileType.getDocumentWriter(writer);
+            doc.write(elements);
         }
     }
 

@@ -24,11 +24,12 @@ import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 
 /**
  * Handles AsciiDoc file writing
  */
-public class AsciiDocWriter {
+public class AsciiDocWriter implements DocumentWriter {
 
     Writer writer;
 
@@ -41,42 +42,39 @@ public class AsciiDocWriter {
     }
 
     /**
-     * Write document header
+     * Write config properties into an AsciiDoc table
+     * @param elements Config properties
      */
-    public void writeHeader() throws IOException {
+    public void write(Collection<ConfigPropertyDocElement> elements) throws IOException {
+        writeHeader();
+
+        writeTableHeading();
+        for (ConfigPropertyDocElement element : elements) {
+            writeProperty(element);
+        }
+        writeTableEnd();
+    }
+
+    private void writeHeader() throws IOException {
         writer.write("= Config Properties\n\n");
     }
 
-    /**
-     * Write table heading
-     */
-    public void writeTableHeading() throws IOException {
+    private void writeTableHeading() throws IOException {
         writer.write("|===\n");
         writer.write("| Property Name | Environment Variable | Default value | Optional | Type\n\n");
     }
 
-    /**
-     * Write a table row for a config property
-     * @param element Config property
-     */
-    public void writeProperty(ConfigPropertyDocElement element) {
-        try {
-            writeProperty(
-                    element.name(),
-                    element.environmentVariable(),
-                    element.defaultValue(),
-                    element.optional(),
-                    element.type()
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private void writeProperty(ConfigPropertyDocElement element) throws IOException {
+        writeProperty(
+                element.name(),
+                element.environmentVariable(),
+                element.defaultValue(),
+                element.optional(),
+                element.type()
+        );
     }
 
-    /**
-     * Write table closing line
-     */
-    public void writeTableEnd() throws IOException {
+    private void writeTableEnd() throws IOException {
         writer.write("|===");
     }
 

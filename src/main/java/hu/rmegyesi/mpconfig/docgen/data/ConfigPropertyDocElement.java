@@ -29,5 +29,10 @@ package hu.rmegyesi.mpconfig.docgen.data;
  * @param optional Optional
  */
 public record ConfigPropertyDocElement(String name, String environmentVariable, String defaultValue, String type,
-                                       boolean optional) {
+                                       boolean optional) implements Comparable<ConfigPropertyDocElement> {
+
+    @Override
+    public int compareTo(ConfigPropertyDocElement o) {
+        return this.name.compareTo(o.name);
+    }
 }
