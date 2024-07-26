@@ -1,8 +1,8 @@
-package hu.rmegyesi.mpconfig.docgen.data;
+package hu.rmegyesi.mpconfig.docgen.exception;
 
 /*-
  * #%L
- * Microprofile Config Docgen Maven Plugin
+ * hu.rmegyesi:microprofile-config-docgen-maven-plugin
  * %%
  * Copyright (C) 2024 Róbert Megyesi
  * %%
@@ -20,19 +20,8 @@ package hu.rmegyesi.mpconfig.docgen.data;
  * #L%
  */
 
-/**
- * Config property data
- * @param name Config property name
- * @param environmentVariable Environment variable name
- * @param defaultValue Default value
- * @param type Type
- * @param optional Optional
- */
-public record ConfigPropertyDocElement(String name, String environmentVariable, String defaultValue, String type,
-                                       boolean optional) implements Comparable<ConfigPropertyDocElement> {
-
-    @Override
-    public int compareTo(ConfigPropertyDocElement o) {
-        return this.name.compareTo(o.name);
+public class UnknownFormatException extends Exception {
+    public UnknownFormatException(String filename) {
+        super("Unknown document format, filename: " + filename);
     }
 }

@@ -1,8 +1,8 @@
-package hu.rmegyesi.mpconfig.docgen.data;
+package hu.rmegyesi.mpconfig.docgen.writer;
 
 /*-
  * #%L
- * Microprofile Config Docgen Maven Plugin
+ * hu.rmegyesi:microprofile-config-docgen-maven-plugin
  * %%
  * Copyright (C) 2024 Róbert Megyesi
  * %%
@@ -20,19 +20,22 @@ package hu.rmegyesi.mpconfig.docgen.data;
  * #L%
  */
 
-/**
- * Config property data
- * @param name Config property name
- * @param environmentVariable Environment variable name
- * @param defaultValue Default value
- * @param type Type
- * @param optional Optional
- */
-public record ConfigPropertyDocElement(String name, String environmentVariable, String defaultValue, String type,
-                                       boolean optional) implements Comparable<ConfigPropertyDocElement> {
+import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
 
-    @Override
-    public int compareTo(ConfigPropertyDocElement o) {
-        return this.name.compareTo(o.name);
-    }
+import java.io.IOException;
+import java.util.Collection;
+
+/**
+ * Config property document writer
+ */
+public interface DocumentWriter {
+
+    String TITLE = "Config Properties";
+    String[] HEADERS = {"Property", "Environment variable", "Default value", "Optional", "Type"};
+
+    /**
+     * Write config properties into a document
+     * @param elements Config properties
+     */
+    void write(Collection<ConfigPropertyDocElement> elements) throws IOException;
 }

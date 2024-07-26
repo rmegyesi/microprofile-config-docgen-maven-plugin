@@ -21,10 +21,12 @@ package hu.rmegyesi.mpconfig.docgen;
  */
 
 import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
+import hu.rmegyesi.mpconfig.docgen.data.DocumentFormat;
+import hu.rmegyesi.mpconfig.docgen.exception.UnknownFormatException;
 import hu.rmegyesi.mpconfig.docgen.mpconfig.MPConfigAnnotationProcessor;
 import hu.rmegyesi.mpconfig.docgen.scanner.ClassScanner;
 import hu.rmegyesi.mpconfig.docgen.smallryeconfig.SmallryeConfigMappingAnnotationProcessor;
-import hu.rmegyesi.mpconfig.docgen.writer.AsciiDocWriter;
+import hu.rmegyesi.mpconfig.docgen.writer.DocumentWriter;
 import io.smallrye.config.ConfigMapping;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,6 +41,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -52,8 +57,18 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
     private MavenProject project;
 
-    @Parameter(defaultValue = "${project.basedir}/config-properties.adoc", property = "outputFile", required = true)
+    @Parameter(defaultValue = "${project.basedir}/config-properties.md", property = "outputFile", required = true)
     private File outputFile;
+
+    /**
+     * Supported formats:
+     * <ul>
+     *     <li>ASCII_DOC</li>
+     *     <li>MARKDOWN</li>
+     * </ul>
+     */
+    @Parameter(property = "format")
+    private DocumentFormat format;
 
     @Parameter(property = "packageName", required = true)
     private String packageName;
@@ -73,23 +88,23 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
             smallryeConfigMappingAnnotationProcessor = new SmallryeConfigMappingAnnotationProcessor();
 
             generateDocumentation();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | UnknownFormatException e) {
             throw new MojoExecutionException("Error writing documentation", e);
         }
     }
 
-    private void generateDocumentation() throws IOException, ClassNotFoundException {
-        Stream<ConfigPropertyDocElement> configPropertyDocElementStream = classScanner.getAllClasses(packageName)
-                .flatMap(this::getElements);
+    private void generateDocumentation() throws IOException, ClassNotFoundException, UnknownFormatException {
+        DocumentFormat documentFormat = getFormat();
+        List<ConfigPropertyDocElement> elements = classScanner.getAllClasses(packageName)
+                .flatMap(this::getElements)
+                .sorted()
+                .distinct()
+                .toList();
+
 
         try (FileWriter writer = new FileWriter(outputFile)) {
-            AsciiDocWriter doc = new AsciiDocWriter(writer);
-            doc.writeHeader();
-            doc.writeTableHeading();
-
-            configPropertyDocElementStream.forEach(doc::writeProperty);
-
-            doc.writeTableEnd();
+            DocumentWriter doc = documentFormat.createDocumentWriter(writer);
+            doc.write(elements);
         }
     }
 
@@ -99,6 +114,26 @@ public class MPConfigDocGeneratorMojo extends AbstractMojo {
         } else {
             return mpConfigAnnotationProcessor.processClass(clazz);
         }
+    }
+
+    private DocumentFormat getFormat() throws UnknownFormatException {
+        if (format != null) return format;
+
+        String filename = outputFile.getName();
+
+        Optional<DocumentFormat> fileTypeFromFilename = getFormat(filename);
+        if (fileTypeFromFilename.isEmpty()) {
+            throw new UnknownFormatException(filename);
+        }
+
+        return fileTypeFromFilename.get();
+    }
+
+    static Optional<DocumentFormat> getFormat(String filename) {
+        return Arrays.stream(DocumentFormat.values())
+                .filter(documentFormat -> Arrays.stream(documentFormat.getKnownExtensions())
+                        .anyMatch(filename::endsWith))
+                .findFirst();
     }
 
 
