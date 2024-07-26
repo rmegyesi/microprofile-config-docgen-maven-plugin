@@ -1,5 +1,25 @@
 package hu.rmegyesi.mpconfig.docgen.writer;
 
+/*-
+ * #%L
+ * hu.rmegyesi:microprofile-config-docgen-maven-plugin
+ * %%
+ * Copyright (C) 2024 Róbert Megyesi
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 
 import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
 
@@ -11,8 +31,6 @@ import java.util.Collection;
  * Handles Markdown file writing
  */
 public class MarkdownWriter implements DocumentWriter {
-
-    public static final String[] HEADERS = new String[]{"Property", "Environment variable", "Default value", "Optional", "Type"};
 
     Writer writer;
 
@@ -31,10 +49,16 @@ public class MarkdownWriter implements DocumentWriter {
     public void write(Collection<ConfigPropertyDocElement> elements) throws IOException {
         int[] columnWidths = getColumnWidths(elements);
 
+        writeHeader();
+
         writeTableHeading(columnWidths);
         for (ConfigPropertyDocElement element : elements) {
             writeRow(element, columnWidths);
         }
+    }
+
+    private void writeHeader() throws IOException {
+        writer.write("# " + TITLE + "\n\n");
     }
 
     private void writeTableHeading(int[] columnWidths) throws IOException {
@@ -42,7 +66,13 @@ public class MarkdownWriter implements DocumentWriter {
             String header = formatStringToWidth(HEADERS[i], columnWidths[i]);
             writer.write("| " + header + " ");
         }
-        writer.write(" |");
+        writer.write("|\n");
+
+        for (int i = 0; i < HEADERS.length; i++) {
+            String s = "-".repeat(columnWidths[i] + 2);
+            writer.write("|" + s);
+        }
+        writer.write("|\n");
     }
 
     private void writeRow(ConfigPropertyDocElement element, int[] columnWidths) throws IOException {
@@ -51,7 +81,7 @@ public class MarkdownWriter implements DocumentWriter {
         writeCell(element.defaultValue(), columnWidths[2]);
         writeCell(Boolean.toString(element.optional()), columnWidths[3]);
         writeCell(element.type(), columnWidths[4]);
-        writer.write(" |");
+        writer.write("|\n");
     }
 
     private void writeCell(String value, int width) throws IOException {

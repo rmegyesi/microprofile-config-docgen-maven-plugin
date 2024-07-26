@@ -56,12 +56,15 @@ public class AsciiDocWriter implements DocumentWriter {
     }
 
     private void writeHeader() throws IOException {
-        writer.write("= Config Properties\n\n");
+        writer.write("= " + TITLE + "\n\n");
     }
 
     private void writeTableHeading() throws IOException {
         writer.write("|===\n");
-        writer.write("| Property Name | Environment Variable | Default value | Optional | Type\n\n");
+        for (String header : HEADERS) {
+            writer.write("| " + header + " ");
+        }
+        writer.write("|\n\n");
     }
 
     private void writeProperty(ConfigPropertyDocElement element) throws IOException {

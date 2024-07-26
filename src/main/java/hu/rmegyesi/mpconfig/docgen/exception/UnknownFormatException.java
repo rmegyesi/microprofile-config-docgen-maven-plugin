@@ -1,4 +1,4 @@
-package hu.rmegyesi.mpconfig.docgen.writer;
+package hu.rmegyesi.mpconfig.docgen.exception;
 
 /*-
  * #%L
@@ -20,22 +20,8 @@ package hu.rmegyesi.mpconfig.docgen.writer;
  * #L%
  */
 
-import hu.rmegyesi.mpconfig.docgen.data.ConfigPropertyDocElement;
-
-import java.io.IOException;
-import java.util.Collection;
-
-/**
- * Config property document writer
- */
-public interface DocumentWriter {
-
-    String TITLE = "Config Properties";
-    String[] HEADERS = {"Property", "Environment variable", "Default value", "Optional", "Type"};
-
-    /**
-     * Write config properties into a document
-     * @param elements Config properties
-     */
-    void write(Collection<ConfigPropertyDocElement> elements) throws IOException;
+public class UnknownFormatException extends Exception {
+    public UnknownFormatException(String filename) {
+        super("Unknown document format, filename: " + filename);
+    }
 }
