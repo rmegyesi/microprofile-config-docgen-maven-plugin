@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 /**
  * Document generator mojo.
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class MPConfigDocGeneratorMojo extends AbstractMojo {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MPConfigDocGeneratorMojo.class);
