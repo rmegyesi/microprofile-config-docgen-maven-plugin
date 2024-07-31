@@ -28,7 +28,7 @@ Add the following snippet to your pom.xml:
         <plugin>
             <groupId>hu.rmegyesi</groupId>
             <artifactId>microprofile-config-docgen-maven-plugin</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
             <executions>
                 <execution>
                     <goals>
