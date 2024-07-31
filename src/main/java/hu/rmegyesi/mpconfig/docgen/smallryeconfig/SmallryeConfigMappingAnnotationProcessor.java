@@ -28,7 +28,9 @@ import io.smallrye.config.WithName;
 import io.smallrye.config.WithParentName;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -48,10 +50,11 @@ public class SmallryeConfigMappingAnnotationProcessor {
     }
 
     private Stream<ConfigPropertyDocElement> processInterface(Class<?> clazz, ConfigMapping configMapping, Set<Class<?>> configGroups, String prefix) {
-        HashSet<Class<?>> groups = new HashSet<>(Arrays.asList(clazz.getDeclaredClasses()));
+        HashSet<Class<?>> groups = new HashSet<>(getDeclaredInterfaces(clazz));
         groups.addAll(configGroups);
 
         return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(SmallryeConfigMappingAnnotationProcessor::nonStatic)
                 .flatMap(method -> processMethod(method, configMapping, groups, prefix));
     }
 
@@ -85,6 +88,17 @@ public class SmallryeConfigMappingAnnotationProcessor {
         boolean optional = method.getReturnType().equals(Optional.class);
 
         return Stream.of(new ConfigPropertyDocElement(name, environmentVariable, defaultValue, type, optional));
+    }
+
+    static Set<Class<?>> getDeclaredInterfaces(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredClasses())
+                .filter(declaredClass -> Modifier.isInterface(declaredClass.getModifiers()))
+                .collect(Collectors.toSet());
+    }
+
+    static boolean nonStatic(Method method) {
+        int modifiers = method.getModifiers();
+        return !Modifier.isStatic(modifiers);
     }
 
     static String getDefaultValue(Method method) {

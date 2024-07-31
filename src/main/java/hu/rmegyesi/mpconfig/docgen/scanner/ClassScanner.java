@@ -71,7 +71,7 @@ public class ClassScanner {
     }
 
     private Stream<Class<?>> findClasses(File directory, String packageName) {
-        LOGGER.info("findClasses in directory: {}", directory.toString());
+        LOGGER.debug("findClasses in directory: {}", directory.toString());
 
         if (!directory.exists()) {
             return Stream.empty();
@@ -88,10 +88,11 @@ public class ClassScanner {
                     } else if (file.getName().endsWith(".class")) {
                         String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
                         try {
+                            LOGGER.debug("Loading class: {}", className);
                             Class<?> loadedClass = classLoader.loadClass(className);
                             return Stream.of(loadedClass);
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException(e);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Failed to load class: " + className, e);
                         }
                     } else {
                         return Stream.empty();
@@ -103,10 +104,9 @@ public class ClassScanner {
     private ClassLoader getClassLoader(MavenProject mavenProject) {
         ClassLoader classLoader = getClass().getClassLoader();
         try {
-            List<String> classpathElements = mavenProject.getRuntimeClasspathElements();
-            if (null == classpathElements) {
-                throw new RuntimeException("Could not read runtime classpath elements");
-            }
+            List<String> classpathElements = mavenProject.getCompileClasspathElements();
+
+            LOGGER.debug("Classpath elements: {}", classpathElements);
 
             URL[] urls = new URL[classpathElements.size()];
 
